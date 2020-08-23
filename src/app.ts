@@ -1,36 +1,62 @@
+import fs from 'fs';
+import { exit } from 'process';
 import readline from 'readline';
 
+import express from 'express';
+
 import { TrainRoute } from './models/trainRoute';
-
-// function askQuestion(query: string) {
-
-//     return new Promise(resolve => rl.question(query, ans => {
-//         rl.close();
-//         resolve(ans);
-//     }))
-// }
-
-// const ans = await askQuestion("Are you sure you want to deploy to PRODUCTION? ");
 
 const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout
 });
 
-const trainRoute = new TrainRoute();
-trainRoute.createTrainRouteFromFile(process.argv[2]); // file path from argument
+const app = express();
 
-rl.question("What station are you getting on the train?: ", source => {
-    rl.question("What station are you getting off the train?: ", destination => {
+let trainRoute: TrainRoute;
+
+const filePath = process.argv[2] // get file path from argument
+
+try {
+    const content = fs.readFileSync(filePath, {encoding:'utf8', flag:'r'});
+
+    trainRoute = new TrainRoute(content.split('\n'));
+} catch(err) {
+    console.error('Error: something wrong with the file: %s, program exits', filePath);
+    exit(0);
+}
+
+const askForInput = (query: string) => {
+
+    return new Promise<string>(resolve => rl.question(query, ans => {
+        resolve(ans);
+    }))
+}
+
+const start = async() => {
+    while (true) {
+        const source = await askForInput("What station are you getting on the train?: ");
+        const destination = await askForInput("What station are you getting off the train?: ");
+
         const route = trainRoute.getRoute(source, destination);
-
+        
         if (route.time === Infinity) {
-            console.log(`There is no route from %s to %s`, source, destination);
+            console.log(`There is no route from %s to %s \n`, source, destination);
             
         } else {
-            console.log(`Your trip from %s to %s includes %d stops and will take %d minutes`, source, destination, route.stop, route.time);
+            console.log(`Your trip from %s to %s includes %d stops and will take %d minutes \n`, source, destination, route.stop, route.time);
         }
+    }
+}
 
-        rl.close();
-    });
+app.use('/routes', (req: any, res: any) => {
+    res.json(trainRoute.getRoutes());
+})
+
+const server = app.listen(10300, async function () {
+    const port = (server.address() as any).port;
+    console.log('listening at: ', port, '\n-----------------------\n');
+
+    // wait for use input
+    start();
 });
