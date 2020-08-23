@@ -1,6 +1,7 @@
 import fs from 'fs';
 import { exit } from 'process';
 import readline from 'readline';
+import path from 'path';
 
 import express from 'express';
 
@@ -49,7 +50,13 @@ const start = async() => {
     }
 }
 
-app.use('/routes', (req: any, res: any) => {
+app.use(express.static(path.join(__dirname, '../../client/train-route/build')))
+
+app.get('/', function (req, res) {
+    res.sendFile(path.join(__dirname, '../../client/train-route/build', 'index.html'));
+});
+
+app.use('/api/routes', (req: any, res: any) => {
     res.json(trainRoute.getRoutes());
 })
 
