@@ -1,0 +1,24 @@
+{
+  "name": "train-route",
+  "version": "1.0.0",
+  "description": "### Requirements node@12.16.0",
+  "main": "index.js",
+  "scripts": {
+    "build-server": "cd ./server && tsc",
+    "build-client": "cd ./client/train-route && npm run build",
+    "start-server": "cd ./server && npm run start",
+    "start-client": "cd ./client/train-route && npm run start",
+    "start": "npm run build-client && npm run build-server && npm run start-server",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NatU129/train-route.git"
+  },
+  "author": "Nat U.",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/NatU129/train-route/issues"
+  },
+  "homepage": "https://github.com/NatU129/train-route#readme"
+}
