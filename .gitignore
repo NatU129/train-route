@@ -1,7 +1,8 @@
 node_modules
 
-*.js
-*.js.map
+#transpile files
+/server/src/**/*.js
+/server/src/**/.js.map
 
 # dependencies
 /.pnp
