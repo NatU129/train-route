@@ -5,14 +5,20 @@ node@12.16.0
 
 
 ### How to run project
-1. Build client
+1. Install packages for both client and server
 ```bash
 cd client/train-route
-npm run build
+npm install
+
+cd ../../server
+npm install
 ```
-2. Run server
+2. Build client
 ```bash
-cd server
-tsc
-npm run start ./src/route.csv
+npm run build-client 
+```
+3. Run server
+```bash
+npm run build-server 
+npm run start-server ./src/route.csv
 ```
