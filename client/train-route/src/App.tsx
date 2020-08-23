@@ -1,11 +1,31 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 import { Graph } from "react-d3-graph";
 
 import './App.css';
 
 function App() {
-  const data = { "nodes": [{ "id": "A" }, { "id": "B" }, { "id": "D" }, { "id": "C" }, { "id": "E" }, { "id": "F" }, { "id": "G" }, { "id": "H" }, { "id": "J" }, { "id": "I" }], "links": [{ "source": "A", "target": "B", "weight": 5 }, { "source": "A", "target": "D", "weight": 15 }, { "source": "B", "target": "C", "weight": 5 }, { "source": "C", "target": "D", "weight": 7 }, { "source": "E", "target": "F", "weight": 5 }, { "source": "F", "target": "G", "weight": 5 }, { "source": "G", "target": "H", "weight": 10 }, { "source": "G", "target": "J", "weight": 20 }, { "source": "H", "target": "I", "weight": 10 }, { "source": "I", "target": "J", "weight": 5 }] };
+  return (
+    <div className="App">
+      <TrainRoute />
+    </div>
+  );
+}
+
+function TrainRoute() {
+  const [data, setData] = useState({routes: {nodes: [], links: []}});
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const result = await fetch('/api/routes', { method: "GET" }).then(response => response.json())
+
+      console.log('routes: ', result);
+      
+      setData({routes: result});
+    };
+ 
+    fetchData();
+  }, []);
 
   const config = {
     nodeHighlightBehavior: true,
@@ -20,13 +40,14 @@ function App() {
   };
 
   return (
-    <div className="App">
-      <Graph
-        id="route-graph"
-        data={data}
-        config={config}
-      />;
-    </div>
+      data.routes.nodes.length !== 0 ?
+        <Graph
+          id="route-graph"
+          data={data.routes}
+          config={config}
+        /> : 
+        <div></div>
   );
 }
+
 export default App;
